@@ -10,12 +10,15 @@
   # RewriteCond %{HTTPS} off
   # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-  # Don't rewrite real files and directories
+  # 1. Forward /api requests to Node.js backend server (Port 5000)
+  RewriteRule ^api/(.*)$ http://127.0.0.1:5000/api/$1 [P,L]
+
+  # 2. Don't rewrite real files and directories
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Fallback all other URLs to index.html for React Router SPA
+  # 3. Fallback all other URLs to index.html for React Router SPA
   RewriteRule ^ index.html [L]
 </IfModule>
 
