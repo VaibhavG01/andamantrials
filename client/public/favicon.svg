@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#007791"/>
+      <stop offset="50%" stop-color="#009E96"/>
+      <stop offset="100%" stop-color="#00C2B8"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#041A28"/>
+      <stop offset="100%" stop-color="#0A2B45"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad)"/>
+  <rect width="60" height="60" x="2" y="2" rx="14" fill="none" stroke="#00C2B8" stroke-width="1.5" stroke-opacity="0.4"/>
+  <g font-family="'Cinzel', 'Playfair Display', Georgia, serif" font-weight="900" font-size="28">
+    <text x="8" y="44" fill="#F8FBFC">A</text>
+    <text x="32" y="44" fill="#00C2B8">T</text>
+  </g>
+  <path d="M 12 43 C 24 45, 34 32, 54 27 C 46 33, 32 46, 12 43 Z" fill="url(#waveGrad)"/>
+  <path d="M 19 32 Q 22 26 25 24 M 22 26 Q 26 28 27 30 M 21 27 Q 18 24 17 21" stroke="#00C2B8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+</svg>

@@ -1,0 +1,90 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import dotenv from 'dotenv';
+
+import apiRoutes from './routes/index.js';
+import { swaggerSpec } from './config/swagger.js';
+import { notFoundHandler, errorHandler } from './middlewares/errorMiddleware.js';
+import { apiLimiter } from './middlewares/rateLimitMiddleware.js';
+import { sequelize } from './config/database.js';
+
+dotenv.config();
+
+const app = express();
+
+// ── 0. High-Performance Gzip/Brotli Compression
+app.use(compression({
+  level: 6,
+  threshold: 1024,
+}));
+
+// ── 1. Security Middlewares
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
+const configuredOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()) : []),
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || process.env.NODE_ENV === 'development' || configuredOrigins.includes(origin) || configuredOrigins.some(o => origin.startsWith(o))) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS policy`));
+    }
+  },
+  credentials: true,
+  exposedHeaders: ['x-rtb-fingerprint-id', 'request-id']
+}));
+
+// ── 2. Request Parsing Middlewares
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ── 3. Static Media File Serving
+const uploadPath = path.join(process.cwd(), 'uploads');
+app.use('/uploads', express.static(uploadPath));
+
+// ── 4. API Rate Limiting
+app.use('/api/', apiLimiter);
+
+// ── 5. Swagger API Documentation Endpoint
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// ── 6. Health Check Endpoint (/api/v1/health)
+app.get('/api/v1/health', async (req, res) => {
+  let dbStatus = 'disconnected';
+  try {
+    await sequelize.authenticate();
+    dbStatus = 'connected';
+  } catch (err) {
+    dbStatus = 'error: ' + err.message;
+  }
+
+  res.status(200).json({
+    success: true,
+    status: 'OK',
+    environment: process.env.NODE_ENV || 'development',
+    database: dbStatus,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ── 7. Primary REST API v1 Routes
+app.use(process.env.API_PREFIX || '/api/v1', apiRoutes);
+
+// ── 8. Error Handling Middlewares
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+export default app;

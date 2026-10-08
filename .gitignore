@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ANDAMAN TRAILS — ROOT GITIGNORE
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production Builds
+dist/
+client/dist/
+dist-ssr/
+
+# Environment Variables & Private Keys
+.env
+.env.local
+.env.*.local
+client/.env
+server/.env
+
+# Local Databases & Backups
+*.sqlite
+*.sqlite3
+*.db
+server/*.sqlite
+
+# Uploads & User Generated Content (keep directory structure)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs & Debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# System & IDE Files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

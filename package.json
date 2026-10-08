@@ -1,0 +1,24 @@
+{
+  "name": "andaman-trails-fullstack",
+  "version": "1.0.0",
+  "description": "Full-Stack Travel Platform for Andaman Trails (React + Redux Toolkit + Three.js + Express + MySQL + Sequelize)",
+  "private": true,
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "db:setup": "npm --prefix server run db:setup",
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server run start"
+  },
+  "keywords": [
+    "andaman-trails",
+    "react",
+    "redux-toolkit",
+    "threejs",
+    "express",
+    "mysql",
+    "sequelize"
+  ],
+  "author": "Andaman Trails Team",
+  "license": "ISC"
+}
