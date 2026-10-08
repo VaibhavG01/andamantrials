@@ -7,10 +7,11 @@ node_modules/
 client/node_modules/
 server/node_modules/
 
-# Production Builds
+# Production Builds & Archives
 dist/
 client/dist/
 dist-ssr/
+*.zip
 
 # Environment Variables & Private Keys
 .env
