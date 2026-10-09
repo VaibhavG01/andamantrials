@@ -15,7 +15,7 @@ import apiRoutes from './routes/index.js';
 import { swaggerSpec } from './config/swagger.js';
 import { notFoundHandler, errorHandler } from './middlewares/errorMiddleware.js';
 import { apiLimiter } from './middlewares/rateLimitMiddleware.js';
-import { sequelize } from './config/database.js';
+import { sequelize, connectDatabase } from './config/database.js';
 
 dotenv.config();
 
@@ -73,7 +73,13 @@ app.get('/api/v1/health', async (req, res) => {
     await sequelize.authenticate();
     dbStatus = 'connected';
   } catch (err) {
-    dbStatus = 'error: ' + err.message;
+    try {
+      await connectDatabase();
+      await sequelize.authenticate();
+      dbStatus = 'connected';
+    } catch (retryErr) {
+      dbStatus = 'error: ' + retryErr.message;
+    }
   }
 
   res.status(200).json({
@@ -81,6 +87,8 @@ app.get('/api/v1/health', async (req, res) => {
     status: 'OK',
     environment: process.env.NODE_ENV || 'development',
     database: dbStatus,
+    dbHost: sequelize.config ? sequelize.config.host : 'unknown',
+    dbName: sequelize.config ? sequelize.config.database : 'unknown',
     timestamp: new Date().toISOString(),
   });
 });
