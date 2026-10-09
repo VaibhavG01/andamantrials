@@ -1,0 +1,1 @@
+import{v as e}from"./three-vendor-Md08yeGZ.js";import t from"./Ferries-B1z74t5g.js";var n=e();function r(){return(0,n.jsx)(t,{})}export{r as default};

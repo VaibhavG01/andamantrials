@@ -93,6 +93,7 @@ const getDistFolder = () => {
   const possiblePaths = [
     path.join(process.cwd(), 'dist'),
     path.join(process.cwd(), 'client', 'dist'),
+    path.join(process.cwd(), 'server', 'dist'),
     path.join(__dirname, '../../dist'),
     path.join(__dirname, '../../client/dist'),
     path.join(__dirname, '../dist'),
@@ -112,8 +113,12 @@ app.use((req, res, next) => {
   }
   const distDir = getDistFolder();
   if (distDir) {
+    // Explicit root / index.html handling
+    if (req.path === '/' || req.path === '/index.html') {
+      return res.sendFile(path.join(distDir, 'index.html'));
+    }
     const filePath = path.join(distDir, req.path);
-    if (req.path !== '/' && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       return res.sendFile(filePath);
     }
     const indexPath = path.join(distDir, 'index.html');
