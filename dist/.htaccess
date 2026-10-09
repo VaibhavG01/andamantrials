@@ -11,8 +11,9 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # 2. Fallback all non-file HTML page URLs to index.html for React SPA
+  # 2. Fallback all non-file HTML page URLs to index.html for React SPA (Exclude /api/ and /assets/)
   RewriteCond %{REQUEST_URI} !^/assets/
+  RewriteCond %{REQUEST_URI} !^/api/
   RewriteRule ^ index.html [L]
 </IfModule>
 

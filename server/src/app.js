@@ -42,13 +42,11 @@ const configuredOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || process.env.NODE_ENV === 'development' || configuredOrigins.includes(origin) || configuredOrigins.some(o => origin.startsWith(o))) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS policy`));
-    }
+    callback(null, true);
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-rtb-fingerprint-id', 'request-id'],
   exposedHeaders: ['x-rtb-fingerprint-id', 'request-id']
 }));
 
@@ -97,106 +95,26 @@ app.get('/api/v1/health', async (req, res) => {
 app.use(process.env.API_PREFIX || '/api/v1', apiRoutes);
 
 // ── 7.5. Serve Static Frontend Built Assets & SPA Fallback (Production)
-const getDistFolder = () => {
-  const possiblePaths = [
-    path.join(process.cwd(), 'dist'),
-    path.join(process.cwd(), 'client', 'dist'),
-    path.join(process.cwd(), 'server', 'dist'),
-    path.join(__dirname, '../../dist'),
-    path.join(__dirname, '../../client/dist'),
-    path.join(__dirname, '../dist'),
-    path.join(__dirname, '../client/dist'),
-  ];
-  for (const p of possiblePaths) {
-    if (fs.existsSync(path.join(p, 'index.html'))) {
-      return p;
-    }
-  }
-  return null;
-};
-
-const distDir = getDistFolder();
+// ── 7.5. Serve Static Frontend Built Assets & SPA Fallback (Production)
+const _dirname = path.resolve();
+const distDir = [
+  path.join(_dirname, 'dist'),
+  path.join(_dirname, 'client', 'dist'),
+  path.join(__dirname, '../../dist'),
+  path.join(__dirname, '../../client/dist'),
+].find(p => fs.existsSync(path.join(p, 'index.html')));
 
 if (distDir) {
-  // 1. Mount assets static middleware first for maximum speed & exact MIME types
-  app.use('/assets', express.static(path.join(distDir, 'assets'), {
-    maxAge: '1y',
-    immutable: true
-  }));
+  // 1. Serve all static files from dist directly
+  app.use(express.static(distDir));
 
-  // 2. Mount root static middleware (favicon, logo, icons, manifest)
-  app.use(express.static(distDir, {
-    index: false,
-    setHeaders: (res, filepath) => {
-      if (filepath.endsWith('index.html')) {
-        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-      }
-    }
-  }));
-
-  // 3. Smart fallback alias for outdated/cached asset hash requests (e.g. index-CRxKNyHl.js -> index-*.js)
-  app.use('/assets', (req, res) => {
-    const assetsFolder = path.join(distDir, 'assets');
-    if (fs.existsSync(assetsFolder)) {
-      const files = fs.readdirSync(assetsFolder);
-      const reqFilename = path.basename(req.path || '');
-      const ext = path.extname(reqFilename).toLowerCase();
-
-      if (ext === '.css' || ext === '.js') {
-        const nameWithoutExt = reqFilename.slice(0, -ext.length);
-        const parts = nameWithoutExt.split('-');
-        const prefix = parts.length > 1 ? parts.slice(0, -1).join('-') : nameWithoutExt;
-
-        let match = files.find(f => f.startsWith(prefix + '-') && f.endsWith(ext));
-        if (!match && ext === '.css') {
-          match = files.find(f => f.endsWith('.css'));
-        }
-        if (!match && ext === '.js') {
-          match = files.find(f => f.startsWith('index-') && f.endsWith('.js')) || files.find(f => f.endsWith('.js'));
-        }
-
-        if (match) {
-          const mimeType = ext === '.css' ? 'text/css; charset=utf-8' : 'application/javascript; charset=utf-8';
-          res.setHeader('Content-Type', mimeType);
-          res.setHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0');
-          res.setHeader('CDN-Cache-Control', 'no-store');
-          res.setHeader('Surrogate-Control', 'no-store');
-          return res.sendFile(path.join(assetsFolder, match));
-        }
-      }
-    }
-
-    const ext = path.extname(req.path || '').toLowerCase();
-    res.setHeader('CDN-Cache-Control', 'no-store');
-    res.setHeader('Surrogate-Control', 'no-store');
-
-    if (ext === '.css') {
-      return res.status(200).setHeader('Content-Type', 'text/css; charset=utf-8').send('/* Asset Updated - Refresh Page */');
-    }
-    if (ext === '.js') {
-      return res.status(200).setHeader('Content-Type', 'application/javascript; charset=utf-8').send('console.log("Asset Hash Updated - Refreshing Page..."); if (typeof window !== "undefined") { window.location.reload(); }');
-    }
-
-    res.status(404).type('text/plain').send('Asset Not Found');
-  });
-
-  // 4. SPA Fallback for page navigation routes
-  app.get('*', (req, res, next) => {
+  // 2. SPA Fallback for all other routes
+  app.get(/.*/, (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/api-docs')) {
       return next();
     }
-    const indexPath = path.join(distDir, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
-      res.setHeader('CDN-Cache-Control', 'no-store');
-      res.setHeader('Surrogate-Control', 'no-store');
-      return res.sendFile(indexPath);
-    }
-    next();
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.sendFile(path.resolve(distDir, 'index.html'));
   });
 }
 
