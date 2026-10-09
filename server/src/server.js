@@ -16,21 +16,11 @@ import { seedDatabase } from './database/seed.js';
 import { initScheduler } from './services/schedulerService.js';
 import { logger } from './utils/logger.js';
 
-
 const PORT = process.env.PORT || 5000;
 
-const startServer = async () => {
+const startServer = () => {
   try {
-    // Connect Database
-    await connectDatabase();
-
-    // Verify Mail Transporter
-    await verifyMailConnection();
-
-    // Run Development Seeder
-    await seedDatabase();
-
-    // Start HTTP Server
+    // 1. Start HTTP Server immediately so website frontend and assets serve without delay
     const server = app.listen(PORT, () => {
       logger.info(`==================================================`);
       logger.info(`🚀 ANDAMAN TRAILS BACKEND SERVER IS RUNNING`);
@@ -38,19 +28,25 @@ const startServer = async () => {
       logger.info(`🔗 HEALTH: http://localhost:${PORT}/api/v1/health`);
       logger.info(`📚 DOCS: http://localhost:${PORT}/api-docs`);
       logger.info(`==================================================`);
-      
-      // Initialize Background Task Scheduler for status updates and reminders
+
+      // Initialize background task scheduler
       initScheduler();
     });
+
+    // 2. Connect Database asynchronously
+    connectDatabase()
+      .then(() => seedDatabase())
+      .catch((err) => logger.warn(`Database connection notice: ${err.message}`));
+
+    // 3. Verify Mail Transporter asynchronously
+    verifyMailConnection().catch((err) => logger.warn(`Mail verification notice: ${err.message}`));
 
     // Unhandled Rejections
     process.on('unhandledRejection', (err) => {
       logger.error(`Unhandled Rejection: ${err.message}`);
-      server.close(() => process.exit(1));
     });
   } catch (error) {
     logger.error(`Fatal Server Startup Error: ${error.message}`);
-    process.exit(1);
   }
 };
 

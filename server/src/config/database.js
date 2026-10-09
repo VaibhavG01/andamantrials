@@ -11,7 +11,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 dotenv.config();
 
-const dbHost = process.env.DB_HOST || '127.0.0.1';
+const rawHost = (process.env.DB_HOST || '').trim();
+const dbHost = (rawHost === 'localhost' || rawHost === '::1' || !rawHost) ? '127.0.0.1' : rawHost;
 const dbPort = parseInt(process.env.DB_PORT, 10) || 3306;
 const dbName = process.env.DB_NAME || 'u500235979_andaman_trials';
 const dbUser = process.env.DB_USER || 'u500235979_vgtechstudio';
