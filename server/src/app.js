@@ -124,8 +124,26 @@ if (distDir) {
   // 2. Mount root static middleware (favicon, logo, icons, manifest)
   app.use(express.static(distDir, { index: false }));
 
-  // 3. Catch non-existent assets and 404 them cleanly as plain text
+  // 3. Fallback alias for outdated asset hash requests (e.g. index-D3645nFV.css -> index-*.css)
   app.use('/assets', (req, res) => {
+    const assetsFolder = path.join(distDir, 'assets');
+    if (fs.existsSync(assetsFolder)) {
+      const files = fs.readdirSync(assetsFolder);
+      if (req.path.endsWith('.css')) {
+        const cssFile = files.find(f => f.endsWith('.css'));
+        if (cssFile) {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+          return res.sendFile(path.join(assetsFolder, cssFile));
+        }
+      }
+      if (req.path.endsWith('.js')) {
+        const jsFile = files.find(f => f.startsWith('index-') && f.endsWith('.js')) || files.find(f => f.endsWith('.js'));
+        if (jsFile) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          return res.sendFile(path.join(assetsFolder, jsFile));
+        }
+      }
+    }
     res.status(404).type('text/plain').send('Asset Not Found');
   });
 
