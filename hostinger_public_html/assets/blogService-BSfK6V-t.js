@@ -1,1 +1,0 @@
-import{t as e}from"./apiClient-CtyYBnF-.js";var t={getBlogs:()=>e(`/blogs`),getBlogBySlug:t=>e(`/blogs/${t}`),getCategories:()=>e(`/blogs/categories/all`)};export{t};
