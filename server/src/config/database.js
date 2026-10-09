@@ -30,31 +30,29 @@ export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
 });
 
 export const connectDatabase = async () => {
-  try {
-    await sequelize.authenticate();
-    logger.info(`✅ MySQL Database Connected Successfully [Host: ${sequelize.config.host} | DB: ${dbName}]`);
-  } catch (error) {
-    logger.warn(`Primary MySQL connection failed [Host: ${sequelize.config.host}]: ${error.message}`);
-    
-    // Automatic retry with alternate host (127.0.0.1 <-> localhost)
-    const currentHost = sequelize.config.host;
-    const altHost = (currentHost === '127.0.0.1' || currentHost === '::1') ? 'localhost' : '127.0.0.1';
-    logger.info(`Retrying MySQL connection via alternate host [${altHost}]...`);
-    try {
-      const altSequelize = new Sequelize(dbName, dbUser, dbPassword, {
-        host: altHost,
-        port: dbPort,
-        dialect: 'mysql',
-        logging: false,
-        pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
-        dialectOptions: { connectTimeout: 10000 },
-        define: { timestamps: true, underscored: false },
-      });
-      await altSequelize.authenticate();
-      Object.assign(sequelize, altSequelize);
-      logger.info(`✅ MySQL Database Connected Successfully via alternate host [${altHost} | DB: ${dbName}]`);
-    } catch (altErr) {
-      logger.error(`❌ MySQL Database Connection Failed on both hosts: ${altErr.message}`);
+  const hosts = [dbHost, dbHost === '127.0.0.1' ? 'localhost' : '127.0.0.1'];
+  const dbNames = [dbName, 'u500235979_andaman_trials', 'u500235979_andaman_trails', 'u500235979_andamantrials'].filter((v, i, a) => a.indexOf(v) === i);
+
+  for (const h of hosts) {
+    for (const d of dbNames) {
+      try {
+        const testSeq = new Sequelize(d, dbUser, dbPassword, {
+          host: h,
+          port: dbPort,
+          dialect: 'mysql',
+          logging: false,
+          pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+          dialectOptions: { connectTimeout: 10000 },
+          define: { timestamps: true, underscored: false },
+        });
+        await testSeq.authenticate();
+        Object.assign(sequelize, testSeq);
+        logger.info(`✅ MySQL Database Connected Successfully [Host: ${h} | User: ${dbUser} | DB: ${d}]`);
+        return;
+      } catch (err) {
+        logger.warn(`Database connect attempt failed [Host: ${h} | DB: ${d}]: ${err.message}`);
+      }
     }
   }
+  logger.error(`❌ MySQL Database Connection Failed on all host/database variations for user [${dbUser}]`);
 };
