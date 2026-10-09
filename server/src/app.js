@@ -113,20 +113,22 @@ app.use((req, res, next) => {
   }
   const distDir = getDistFolder();
   if (distDir) {
-    // Explicit root / index.html handling
-    if (req.path === '/' || req.path === '/index.html') {
-      return res.sendFile(path.join(distDir, 'index.html'));
-    }
-    const filePath = path.join(distDir, req.path);
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-      return res.sendFile(filePath);
-    }
-    const indexPath = path.join(distDir, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      return res.sendFile(indexPath);
-    }
+    // Serve static files dynamically with express.static
+    express.static(distDir, { index: false })(req, res, () => {
+      // If it's a request to /assets/ that wasn't found, 404 cleanly
+      if (req.path.startsWith('/assets/')) {
+        return res.status(404).send('Asset not found');
+      }
+      // SPA Fallback: send index.html for page navigation routes
+      const indexPath = path.join(distDir, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        return res.sendFile(indexPath);
+      }
+      next();
+    });
+  } else {
+    next();
   }
-  next();
 });
 
 // ── 8. Error Handling Middlewares
