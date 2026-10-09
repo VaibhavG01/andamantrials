@@ -160,18 +160,23 @@ if (distDir) {
         if (match) {
           const mimeType = ext === '.css' ? 'text/css; charset=utf-8' : 'application/javascript; charset=utf-8';
           res.setHeader('Content-Type', mimeType);
-          res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+          res.setHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0');
+          res.setHeader('CDN-Cache-Control', 'no-store');
+          res.setHeader('Surrogate-Control', 'no-store');
           return res.sendFile(path.join(assetsFolder, match));
         }
       }
     }
 
     const ext = path.extname(req.path || '').toLowerCase();
+    res.setHeader('CDN-Cache-Control', 'no-store');
+    res.setHeader('Surrogate-Control', 'no-store');
+
     if (ext === '.css') {
-      return res.status(404).setHeader('Content-Type', 'text/css; charset=utf-8').send('/* Asset Not Found */');
+      return res.status(200).setHeader('Content-Type', 'text/css; charset=utf-8').send('/* Asset Updated - Refresh Page */');
     }
     if (ext === '.js') {
-      return res.status(404).setHeader('Content-Type', 'application/javascript; charset=utf-8').send('/* Asset Not Found */');
+      return res.status(200).setHeader('Content-Type', 'application/javascript; charset=utf-8').send('console.log("Asset Hash Updated - Refreshing Page..."); if (typeof window !== "undefined") { window.location.reload(); }');
     }
 
     res.status(404).type('text/plain').send('Asset Not Found');
@@ -187,6 +192,8 @@ if (distDir) {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
+      res.setHeader('CDN-Cache-Control', 'no-store');
+      res.setHeader('Surrogate-Control', 'no-store');
       return res.sendFile(indexPath);
     }
     next();
