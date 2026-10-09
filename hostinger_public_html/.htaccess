@@ -1,25 +1,18 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# ANDAMAN TRAILS — HOSTINGER / APACHE / LITESPEED SPA CONFIGURATION (.htaccess)
+# ANDAMAN TRAILS — HOSTINGER / LITESPEED SPA CONFIGURATION (.htaccess)
 # ─────────────────────────────────────────────────────────────────────────────
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # 1. Forward /api requests to Node.js backend server (Port 5000)
-  RewriteRule ^api/(.*)$ http://127.0.0.1:5000/api/$1 [P,L]
-
-  # 2. Don't rewrite real files and directories that exist on disk
+  # 1. Don't rewrite real files and directories that exist on disk (Serve static CSS, JS, images directly)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # 3. For missing asset requests (/assets/*), forward to Node.js server (Port 5000) so Express fallback alias handles it safely
-  RewriteRule ^assets/(.*)$ http://127.0.0.1:5000/assets/$1 [P,L]
-
-  # 4. Fallback all non-asset HTML page URLs to index.html for React Router SPA
+  # 2. Fallback all non-file HTML page URLs to index.html for React SPA
   RewriteCond %{REQUEST_URI} !^/assets/
-  RewriteCond %{REQUEST_URI} !^/api/
   RewriteRule ^ index.html [L]
 </IfModule>
 
@@ -37,6 +30,13 @@ Options -Indexes
   </IfModule>
 </FilesMatch>
 
+# ── Correct MIME types for JS and CSS
+<IfModule mod_mime.c>
+  AddType text/css .css
+  AddType application/javascript .js
+  AddType image/svg+xml .svg
+</IfModule>
+
 # ── Gzip / Brotli Compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript application/json image/svg+xml
@@ -51,6 +51,8 @@ Options -Indexes
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
   ExpiresByType font/woff2 "access plus 1 year"
   ExpiresByType font/woff "access plus 1 year"
 </IfModule>
