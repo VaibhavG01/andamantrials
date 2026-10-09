@@ -13,11 +13,9 @@ if (fs.existsSync(targetDir)) {
 }
 fs.mkdirSync(targetDir, { recursive: true });
 
-// 2. Ensure dist is fresh
-if (!fs.existsSync(path.join(rootDir, 'dist', 'index.html'))) {
-  console.log('Building dist...');
-  execSync('npm run build', { stdio: 'inherit' });
-}
+// 2. Build fresh production dist
+console.log('Building production dist...');
+execSync('npm run build', { stdio: 'inherit' });
 
 // 3. Copy dist contents (index.html, assets, .htaccess, etc.) to targetDir
 fs.cpSync(path.join(rootDir, 'dist'), targetDir, { recursive: true });
@@ -56,8 +54,8 @@ fs.mkdirSync(path.join(targetDir, 'uploads'), { recursive: true });
 const prodEnvContent = `PORT=5000
 NODE_ENV=production
 API_PREFIX=/api/v1
-FRONTEND_URL=https://deepskyblue-moose-480555.hostingersite.com
-ALLOWED_ORIGINS=https://deepskyblue-moose-480555.hostingersite.com
+FRONTEND_URL=https://yellowgreen-cobra-722771.hostingersite.com
+ALLOWED_ORIGINS=https://yellowgreen-cobra-722771.hostingersite.com,https://deepskyblue-moose-480555.hostingersite.com
 DB_DIALECT=mysql
 USE_SQLITE=false
 DB_HOST=127.0.0.1

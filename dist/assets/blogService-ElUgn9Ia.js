@@ -1,0 +1,1 @@
+import{t as e}from"./apiClient-RFZz5CW9.js";var t={getBlogs:()=>e(`/blogs`),getBlogBySlug:t=>e(`/blogs/${t}`),getCategories:()=>e(`/blogs/categories/all`)};export{t};

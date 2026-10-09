@@ -2,7 +2,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // High-Performance API Client with In-Memory Caching & Request Deduplication
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 // In-memory cache for GET queries
 const apiCache = new Map();
