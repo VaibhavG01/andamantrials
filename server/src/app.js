@@ -4,8 +4,12 @@ import helmet from 'helmet';
 import compression from 'compression';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import swaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import apiRoutes from './routes/index.js';
 import { swaggerSpec } from './config/swagger.js';
