@@ -8,8 +8,8 @@ client/node_modules/
 server/node_modules/
 
 # Production Builds & Archives
-dist/
-client/dist/
+# dist/
+# client/dist/
 dist-ssr/
 *.zip
 
