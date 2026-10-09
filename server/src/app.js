@@ -115,29 +115,32 @@ const getDistFolder = () => {
   return null;
 };
 
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/api-docs')) {
-    return next();
-  }
-  const distDir = getDistFolder();
-  if (distDir) {
-    // Serve static files dynamically with express.static
-    express.static(distDir, { index: false })(req, res, () => {
-      // If it's a request to /assets/ that wasn't found, 404 cleanly
-      if (req.path.startsWith('/assets/')) {
-        return res.status(404).send('Asset not found');
-      }
-      // SPA Fallback: send index.html for page navigation routes
-      const indexPath = path.join(distDir, 'index.html');
-      if (fs.existsSync(indexPath)) {
-        return res.sendFile(indexPath);
-      }
-      next();
-    });
-  } else {
+const distDir = getDistFolder();
+
+if (distDir) {
+  // 1. Mount assets static middleware first for maximum speed & exact MIME types
+  app.use('/assets', express.static(path.join(distDir, 'assets')));
+
+  // 2. Mount root static middleware (favicon, logo, icons, manifest)
+  app.use(express.static(distDir, { index: false }));
+
+  // 3. Catch non-existent assets and 404 them cleanly as plain text
+  app.use('/assets', (req, res) => {
+    res.status(404).type('text/plain').send('Asset Not Found');
+  });
+
+  // 4. SPA Fallback for page navigation routes
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/api-docs')) {
+      return next();
+    }
+    const indexPath = path.join(distDir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
     next();
-  }
-});
+  });
+}
 
 // ── 8. Error Handling Middlewares
 app.use(notFoundHandler);
