@@ -84,24 +84,41 @@ app.get('/api/v1/health', async (req, res) => {
 // ── 7. Primary REST API v1 Routes
 app.use(process.env.API_PREFIX || '/api/v1', apiRoutes);
 
-// ── 7.5. Serve Static Frontend Built Assets (Production Fallback)
-const clientDistPath = path.join(process.cwd(), 'client', 'dist');
-const rootDistPath = path.join(process.cwd(), 'dist');
-const distPath = fs.existsSync(clientDistPath) ? clientDistPath : (fs.existsSync(rootDistPath) ? rootDistPath : null);
-
-if (distPath) {
-  app.use(express.static(distPath));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/api-docs')) {
-      return next();
+// ── 7.5. Serve Static Frontend Built Assets & SPA Fallback (Production)
+const getDistFolder = () => {
+  const possiblePaths = [
+    path.join(process.cwd(), 'dist'),
+    path.join(process.cwd(), 'client', 'dist'),
+    path.join(__dirname, '../../dist'),
+    path.join(__dirname, '../../client/dist'),
+    path.join(__dirname, '../dist'),
+    path.join(__dirname, '../client/dist'),
+  ];
+  for (const p of possiblePaths) {
+    if (fs.existsSync(path.join(p, 'index.html'))) {
+      return p;
     }
-    const indexPath = path.join(distPath, 'index.html');
+  }
+  return null;
+};
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/api-docs')) {
+    return next();
+  }
+  const distDir = getDistFolder();
+  if (distDir) {
+    const filePath = path.join(distDir, req.path);
+    if (req.path !== '/' && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      return res.sendFile(filePath);
+    }
+    const indexPath = path.join(distDir, 'index.html');
     if (fs.existsSync(indexPath)) {
       return res.sendFile(indexPath);
     }
-    next();
-  });
-}
+  }
+  next();
+});
 
 // ── 8. Error Handling Middlewares
 app.use(notFoundHandler);
