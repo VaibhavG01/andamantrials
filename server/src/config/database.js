@@ -15,7 +15,8 @@ dotenv.config();
 
 const sqliteStoragePath = path.resolve(__dirname, '../../andaman_trails.sqlite');
 
-const dbHost = process.env.DB_HOST || '127.0.0.1';
+const rawHost = process.env.DB_HOST || '127.0.0.1';
+const dbHost = (rawHost === 'localhost' || !rawHost) ? '127.0.0.1' : rawHost;
 const dbPort = parseInt(process.env.DB_PORT, 10) || 3306;
 const dbName = process.env.DB_NAME || 'andaman_trails';
 const dbUser = process.env.DB_USER || 'root';
