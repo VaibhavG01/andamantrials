@@ -1,0 +1,128 @@
+// src/components/ferries/FerryCTA.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Final Ferry Call To Action Component
+
+import React from 'react';
+import { ArrowRight, Compass, Ship } from 'lucide-react';
+
+export default function FerryCTA({ onSearchClick }) {
+  return (
+    <section className="ferry-cta-root">
+      <style>{`
+        .ferry-cta-root {
+          max-width: 1340px;
+          margin: 0 auto 80px;
+          padding: 0 24px;
+        }
+
+        .ferry-cta-card {
+          position: relative;
+          border-radius: 28px;
+          overflow: hidden;
+          padding: 70px 48px;
+          text-align: center;
+          background: #f8fafc;
+          border: 1.5px solid #e2e8f0;
+          box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 40px rgba(33, 230, 193, 0.1);
+        }
+        @media (max-width: 640px) {
+          .ferry-cta-card { padding: 48px 24px; }
+        }
+
+        .ferry-cta-bg {
+          position: absolute; inset: 0; z-index: 1;
+        }
+        .ferry-cta-bg img {
+          width: 100%; height: 100%; object-fit: cover;
+          filter: brightness(0.4) saturate(1.2);
+        }
+
+        .ferry-cta-overlay {
+          position: absolute; inset: 0; z-index: 2;
+          background: linear-gradient(180deg, rgba(2, 14, 22, 0.75) 0%, #f8fafc 100%);
+        }
+
+        .ferry-cta-content {
+          position: relative; z-index: 3; max-width: 760px; margin: 0 auto;
+        }
+
+        .ferry-cta-title {
+          font-family: 'Cormorant Garamond', Georgia, serif;
+          font-size: clamp(34px, 5.5vw, 60px);
+          font-weight: 600; color: #0B2545;
+          line-height: 1.06; margin: 0 0 16px;
+        }
+
+        .ferry-cta-desc {
+          font-family: 'Inter', sans-serif;
+          font-size: 15px; color: #475569;
+          line-height: 1.65; margin: 0 auto 32px;
+        }
+
+        .ferry-cta-btns {
+          display: flex; align-items: center; justify-content: center;
+          gap: 16px; flex-wrap: wrap;
+        }
+
+        .ferry-cta-btn-primary {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+          color: #ffffff; background: linear-gradient(135deg, #FF6B4A, #F06543);
+          border: none; padding: 14px 30px; border-radius: 16px;
+          cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+          transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(22, 217, 255, 0.35);
+          text-decoration: none;
+        }
+        .ferry-cta-btn-primary:hover {
+          transform: translateY(-3px); box-shadow: 0 12px 36px rgba(22, 217, 255, 0.55);
+        }
+
+        .ferry-cta-btn-sec {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+          color: #0B2545; background: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          padding: 14px 28px; border-radius: 16px;
+          cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+          transition: all 0.3s ease; text-decoration: none; backdrop-filter: blur(12px);
+        }
+        .ferry-cta-btn-sec:hover {
+          border-color: #F06543; color: #F06543; background: rgba(33, 230, 193, 0.1);
+          transform: translateY(-3px);
+        }
+      `}</style>
+
+      <div className="ferry-cta-card">
+        <div className="ferry-cta-bg">
+          <img
+            src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=90"
+            alt="Andaman Sunset Sailing"
+          />
+        </div>
+        <div className="ferry-cta-overlay" />
+
+        <div className="ferry-cta-content">
+          <h2 className="ferry-cta-title">
+            READY TO CROSS <br />
+            <span style={{ color: '#F06543' }}>THE ANDAMAN SEA?</span>
+          </h2>
+          <p className="ferry-cta-desc">
+            Find your route, choose your high-speed catamaran ferry, and start your tropical island adventure.
+          </p>
+
+          <div className="ferry-cta-btns">
+            <button onClick={onSearchClick} className="ferry-cta-btn-primary">
+              <span>SEARCH FERRIES</span>
+              <ArrowRight size={15} />
+            </button>
+
+            <a href="/plan-trip" className="ferry-cta-btn-sec">
+              <Compass size={15} />
+              <span>PLAN MY TRIP</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+/* ── Global Travel-Tech Design Tokens (Coral + Navy + Warm Cream) ── */
+:root {
+  /* ── 1. Coral / Sunset Terracotta (Primary Accent & Action) ── */
+  --coral-primary:    #f06543;
+  --coral-bright:     #ff6b4a;
+  --coral-hover:      #e05330;
+  --coral-dark:       #d64525;
+  --coral-light:      #fff0eb;
+  --coral-soft:       #ffe4dc;
+  --coral-border:     #ffd3c4;
+  --coral-glow:       rgba(240, 101, 67, 0.35);
+  --coral-gradient:   linear-gradient(135deg, #ff6b4a 0%, #fa6847 50%, #f06543 100%);
+
+  /* ── 2. Deep Ocean Navy (Headings, Branding & High-Contrast Text) ── */
+  --navy:             #0b2545;
+  --navy-dark:        #06182e;
+  --navy-deep:        #002d62;
+  --navy-muted:       #3e5470;
+  --brand-navy:       #0b2545;
+  --brand-royal:      #002d62;
+  --ocean:            #0b2545;
+  --deep:             #06182e;
+  --text-heading:     #0b2545;
+  --text-body:        #2d3e50;
+  --text-muted:       #5c6f84;
+  --text-white:       #ffffff;
+
+  /* ── 3. Warm Cream & Sand (Canvas Background & Surfaces) ── */
+  --bg-canvas:        #faf4ee;
+  --bg-cream:         #faf4ee;
+  --bg-cream-soft:    #fff8f0;
+  --bg-cream-card:    #ffffff;
+  --bg-cream-subtle:  #f5ede4;
+  --border-warm:      #ebded2;
+  --glass-card:       #ffffff;
+  --glass-border:     #ebded2;
+
+  /* ── Legacy Mappings for seamless backward compatibility ── */
+  --teal:             #f06543;
+  --teal-glow:        #ff6b4a;
+  --cyan:             #f06543;
+  --turquoise:        #f06543;
+  --gold:             #f59e0b;
+  --bg-card:          #ffffff;
+  --radius:           20px;
+}
+
+/* ── Global Layout Reset & Anti-Overlap Protection ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--bg-canvas);
+  scroll-behavior: smooth;
+  text-align: left;
+}
+
+body {
+  font-family: 'Inter', 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-body);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  font-weight: 450;
+  background-color: var(--bg-canvas);
+}
+
+/* ── Strong, Crisp Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+p {
+  color: var(--text-body);
+  line-height: 1.65;
+  word-break: break-word;
+}
+
+button {
+  outline: none;
+  font-family: inherit;
+}
+
+/* ── Standardized Height & Width Utilities ── */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-media-fixed {
+  width: 100%;
+  height: clamp(200px, 25vh, 260px);
+  object-fit: cover;
+}
+
+.hero-cover-fixed {
+  width: 100%;
+  height: clamp(320px, 50vh, 560px);
+  object-fit: cover;
+}
+
+.button-height-standard {
+  min-height: clamp(44px, 5vh, 52px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-height-standard {
+  height: clamp(44px, 5vh, 52px);
+}
+
+/* ── Standardized Section & Container Spacing Utilities ── */
+.page-top-offset {
+  padding-top: clamp(105px, 13vh, 155px) !important;
+}
+
+.section-padding {
+  padding-top: clamp(60px, 8vh, 110px) !important;
+  padding-bottom: clamp(60px, 8vh, 110px) !important;
+}
+
+.container-padding {
+  padding-left: clamp(16px, 3.5vw, 48px) !important;
+  padding-right: clamp(16px, 3.5vw, 48px) !important;
+}
+
+.card-padding {
+  padding: clamp(20px, 2.5vw, 32px) !important;
+}
+
+.grid-gap-standard {
+  gap: clamp(20px, 3vw, 36px) !important;
+}
+
+/* ── Centered containers never drift & prevent overflow ── */
+.max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl, .max-w-2xl {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: clamp(16px, 3vw, 36px);
+  padding-right: clamp(16px, 3vw, 36px);
+}
+
+/* ── Premium Solid & Glass Card Utility ── */
+.glass-panel {
+  background: #ffffff;
+  border: 1px solid var(--border-warm);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(11, 37, 69, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.glass-card-hover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--coral-primary) !important;
+  box-shadow: 0 16px 36px rgba(11, 37, 69, 0.10), 0 0 16px var(--coral-glow) !important;
+}
+
+/* ── Form Inputs Spacing & Glow ── */
+input, select, textarea {
+  background: #ffffff;
+  border: 1px solid var(--border-warm);
+  color: var(--text-heading);
+  font-weight: 500;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--coral-primary) !important;
+  box-shadow: 0 0 0 3px var(--coral-glow) !important;
+  outline: none;
+}
+
+/* ── Coral Accent Buttons & Badges ── */
+.btn-coral {
+  background: var(--coral-gradient);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px var(--coral-glow);
+  transition: all 0.25s ease;
+}
+.btn-coral:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(240, 101, 67, 0.45);
+}
+
+/* ── Badge & Tag Solid High-Contrast Styling ── */
+.badge-tag-solid {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-cream-soft); }
+::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--coral-primary); }
+
+/* ── Canvas cursor ── */
+canvas { cursor: grab; }
+canvas:active { cursor: grabbing; }

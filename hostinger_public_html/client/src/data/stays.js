@@ -1,0 +1,206 @@
+// src/data/stays.js
+// ─────────────────────────────────────────────────────────────────────────────
+// Master Stay & Resort Dataset for Andaman Trails.
+
+export const STAYS = [
+  {
+    id: 'taj-exotica',
+    slug: '/stays/taj-exotica',
+    name: 'Taj Exotica Resort & Spa',
+    category: 'LUXURY',
+    destinationId: 'havelock',
+    location: 'Radhanagar Beach, Havelock Island',
+    propertyType: '5-Star Luxury Villa Resort',
+    description:
+      'Spread across 46 acres of lush coconut groves on the legendary Radhanagar Beach. Features stilted Andamanese villas, private plunge pools, and world-class Jiva Spa.',
+    image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 5.0,
+    reviewsCount: 184,
+    pricePerNight: '24,999',
+    featured: true,
+    amenities: [
+      { icon: '🏊‍♂️', label: 'Infinity Pool' },
+      { icon: '🏖️', label: 'Beach Access' },
+      { icon: '💆‍♀️', label: 'Jiva Spa' },
+      { icon: '🍽️', label: 'Fine Dining' },
+      { icon: '📶', label: 'High-speed Wi-Fi' },
+    ],
+    roomTypes: ['Grand Luxury Villa', 'Deluxe Villa with Pool', 'Presidential Suite'],
+  },
+  {
+    id: 'seashell-resort-port-blair',
+    slug: '/stays/seashell-resort-port-blair',
+    name: 'SeaShell Resort & Spa',
+    category: 'BEACHFRONT',
+    destinationId: 'port-blair',
+    location: 'Marine Hill, Port Blair',
+    propertyType: '4-Star Ocean View Resort',
+    description:
+      'Perched on Marine Hill overlooking the turquoise ocean and Ross Island. Rooftop lounge dining, spa, and minutes from the jetty.',
+    image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 4.8,
+    reviewsCount: 142,
+    pricePerNight: '8,999',
+    featured: false,
+    amenities: [
+      { icon: '🏊‍♂️', label: 'Pool' },
+      { icon: '🍸', label: 'Rooftop Bar' },
+      { icon: '🍳', label: 'Breakfast' },
+      { icon: '📶', label: 'Wi-Fi' },
+    ],
+    roomTypes: ['Executive Room', 'Ocean View Suite'],
+  },
+  {
+    id: 'barefoot-at-havelock',
+    slug: '/stays/barefoot-at-havelock',
+    name: 'Barefoot at Havelock',
+    category: 'BOUTIQUE',
+    destinationId: 'havelock',
+    location: 'Beach No. 7, Havelock Island',
+    propertyType: 'Eco Luxury Rainforest Resort',
+    description:
+      'Nestled behind the rainforest canopy of Radhanagar Beach. Sustainable wooden cottages built with indigenous materials, natural tranquility, and organic dining.',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 4.9,
+    reviewsCount: 128,
+    pricePerNight: '14,500',
+    featured: false,
+    amenities: [
+      { icon: '🌿', label: 'Eco Cottages' },
+      { icon: '🏖️', label: 'Direct Beach Walk' },
+      { icon: '🥗', label: 'Organic Food' },
+      { icon: '🧘', label: 'Yoga Pavilion' },
+    ],
+    roomTypes: ['Nicobari Villa', 'Andaman Chalet'],
+  },
+  {
+    id: 'seashell-neil',
+    slug: '/stays/seashell-neil',
+    name: 'SeaShell Samssara',
+    category: 'HONEYMOON',
+    destinationId: 'neil',
+    location: 'Laxmanpur Beach, Neil Island',
+    propertyType: 'Luxury Beachfront Villas',
+    description:
+      'Sophisticated luxury beachfront resort in Neil Island. Crystal lagoon access, private pool villas, and front-row seats to Laxmanpur sunset.',
+    image: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 4.9,
+    reviewsCount: 96,
+    pricePerNight: '11,999',
+    featured: false,
+    amenities: [
+      { icon: '🏊‍♂️', label: 'Lagoon Pool' },
+      { icon: '🌅', label: 'Sunset Lounge' },
+      { icon: '💆‍♀️', label: 'Spa & Wellness' },
+      { icon: '📶', label: 'Free Wi-Fi' },
+    ],
+    roomTypes: ['Lagoon Villa', 'Pool Villa'],
+  },
+  {
+    id: 'silver-sand-havelock',
+    slug: '/stays/silver-sand-havelock',
+    name: 'Silver Sand Beach Resort',
+    category: 'FAMILY',
+    destinationId: 'havelock',
+    location: 'Vijay Nagar Beach, Havelock Island',
+    propertyType: '4-Star Family Beach Resort',
+    description:
+      'Shaded under towering Andaman palm trees directly on Vijay Nagar Beach. Family cottages, swimming pool, and water sports desk.',
+    image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 4.7,
+    reviewsCount: 165,
+    pricePerNight: '7,500',
+    featured: false,
+    amenities: [
+      { icon: '🏊‍♂️', label: 'Pool' },
+      { icon: '👨‍👩‍👧', label: 'Kids Area' },
+      { icon: '🍳', label: 'Breakfast' },
+      { icon: '🏖️', label: 'Private Beach' },
+    ],
+    roomTypes: ['Executive Lagoon Room', 'Pool Villa'],
+  },
+  {
+    id: 'fortune-bay-island',
+    slug: '/stays/fortune-bay-island',
+    name: 'Fortune Resort Bay Island',
+    category: 'BOUTIQUE',
+    destinationId: 'port-blair',
+    location: 'Marine Hill, Port Blair',
+    propertyType: 'Heritage Cliffside Resort',
+    description:
+      'Built with native padauk red timber on a cliff over the Bay of Bengal. Open-air ocean view dining and historical charm.',
+    image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 4.8,
+    reviewsCount: 110,
+    pricePerNight: '6,500',
+    featured: false,
+    amenities: [
+      { icon: '🏊‍♂️', label: 'Cliff Pool' },
+      { icon: '🍸', label: 'Deck Bar' },
+      { icon: '📶', label: 'Wi-Fi' },
+      { icon: '🚗', label: 'Airport Shuttle' },
+    ],
+    roomTypes: ['Standard Ocean View', 'Padauk Suite'],
+  },
+  {
+    id: 'symphony-palms',
+    slug: '/stays/symphony-palms',
+    name: 'Symphony Palms Beach Resort',
+    category: 'BUDGET',
+    destinationId: 'havelock',
+    location: 'Govind Nagar, Havelock Island',
+    propertyType: 'Cozy Eco Beach Huts',
+    description:
+      'Cozy wooden cottages and bamboo beach huts right by the ocean. Pocket-friendly comfort with authentic island vibes.',
+    image: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1200&q=85',
+    gallery: [
+      'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&q=80',
+    ],
+    rating: 4.5,
+    reviewsCount: 148,
+    pricePerNight: '3,999',
+    featured: false,
+    amenities: [
+      { icon: '🏖️', label: 'Beachside' },
+      { icon: '🍳', label: 'Breakfast' },
+      { icon: '📶', label: 'Wi-Fi' },
+    ],
+    roomTypes: ['Eco Wooden Cottage', 'Deluxe Room'],
+  },
+];
+
+export const STAY_FILTER_OPTIONS = [
+  { id: 'ALL', label: 'ALL' },
+  { id: 'LUXURY', label: 'LUXURY' },
+  { id: 'BEACHFRONT', label: 'BEACHFRONT' },
+  { id: 'BOUTIQUE', label: 'BOUTIQUE' },
+  { id: 'FAMILY', label: 'FAMILY' },
+  { id: 'HONEYMOON', label: 'HONEYMOON' },
+  { id: 'BUDGET', label: 'BUDGET' },
+];
+
+export const STAY_DESTINATION_OPTIONS = [
+  { id: 'ALL', label: 'ALL DESTINATIONS' },
+  { id: 'port-blair', label: 'PORT BLAIR' },
+  { id: 'havelock', label: 'HAVELOCK' },
+  { id: 'neil', label: 'NEIL ISLAND' },
+];

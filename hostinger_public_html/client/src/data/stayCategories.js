@@ -1,0 +1,51 @@
+// src/data/stayCategories.js
+export const STAY_CATEGORIES = [
+  {
+    id: 'beachfront',
+    title: 'BEACHFRONT RESORTS',
+    icon: 'Sun',
+    description: 'Wake up to the sound of turquoise waves and walk straight onto white sand beaches.',
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80',
+    slug: 'beachfront-resorts',
+  },
+  {
+    id: 'luxury',
+    title: 'LUXURY STAYS',
+    icon: 'Sparkles',
+    description: 'World-class hospitality, private pools, Ayurvedic spas, and fine dining retreats.',
+    image: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=600&q=80',
+    slug: 'luxury-stays',
+  },
+  {
+    id: 'boutique',
+    title: 'BOUTIQUE HOTELS',
+    icon: 'Compass',
+    description: 'Unique eco-villas and intimate wooden chalets with authentic island character.',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80',
+    slug: 'boutique-hotels',
+  },
+  {
+    id: 'villas',
+    title: 'PRIVATE VILLAS',
+    icon: 'Home',
+    description: 'Spacious multi-bedroom pool villas designed for privacy and extended family stays.',
+    image: 'https://images.unsplash.com/photo-1618773928120-22bc8c5bc16b?auto=format&fit=crop&w=600&q=80',
+    slug: 'private-villas',
+  },
+  {
+    id: 'budget',
+    title: 'BUDGET FRIENDLY',
+    icon: 'ShieldCheck',
+    description: 'Clean, comfortable eco-lodges and guesthouses close to major island jetties.',
+    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80',
+    slug: 'budget-friendly',
+  },
+  {
+    id: 'couple',
+    title: 'COUPLE ESCAPES',
+    icon: 'Heart',
+    description: 'Romantic sea-view suites, candlelit dinners, and private honeymoon packages.',
+    image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80',
+    slug: 'couple-escapes',
+  },
+];
