@@ -15,12 +15,11 @@ dotenv.config();
 
 const sqliteStoragePath = path.resolve(__dirname, '../../andaman_trails.sqlite');
 
-const rawHost = process.env.DB_HOST || '127.0.0.1';
-const dbHost = (rawHost === 'localhost' || !rawHost) ? '127.0.0.1' : rawHost;
+const dbHost = process.env.DB_HOST || '127.0.0.1';
 const dbPort = parseInt(process.env.DB_PORT, 10) || 3306;
 const dbName = process.env.DB_NAME || 'andaman_trails';
 const dbUser = process.env.DB_USER || 'root';
-const dbPassword = process.env.DB_PASSWORD || '';
+const dbPassword = (process.env.DB_PASSWORD || '').replace(/^["']|["']$/g, '');
 
 const useSqlite = process.env.DB_DIALECT === 'sqlite' || process.env.USE_SQLITE === 'true';
 
@@ -46,10 +45,34 @@ export const sequelize = useSqlite
 export const connectDatabase = async () => {
   try {
     await sequelize.authenticate();
-    logger.info(`✅ Database Connected Successfully [Dialect: ${sequelize.getDialect().toUpperCase()} | Host: ${dbHost} | DB: ${dbName}]`);
+    logger.info(`✅ Database Connected Successfully [Dialect: ${sequelize.getDialect().toUpperCase()} | Host: ${sequelize.config.host} | DB: ${dbName}]`);
   } catch (error) {
-    logger.error(`❌ MySQL Connection Error [Host: ${dbHost} | User: ${dbUser} | DB: ${dbName}]: ${error.message}`);
+    logger.warn(`Primary DB connection failed [Host: ${sequelize.config.host}]: ${error.message}`);
     
+    // Self-healing: try alternate host (127.0.0.1 <-> localhost) for Hostinger MySQL permissions
+    if (!useSqlite) {
+      const currentHost = sequelize.config.host;
+      const altHost = (currentHost === '127.0.0.1' || currentHost === '::1') ? 'localhost' : '127.0.0.1';
+      logger.info(`Attempting DB connection via alternate host [${altHost}]...`);
+      try {
+        const altSequelize = new Sequelize(dbName, dbUser, dbPassword, {
+          host: altHost,
+          port: dbPort,
+          dialect: 'mysql',
+          logging: false,
+          pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+          dialectOptions: { connectTimeout: 10000 },
+          define: { timestamps: true, underscored: false },
+        });
+        await altSequelize.authenticate();
+        Object.assign(sequelize, altSequelize);
+        logger.info(`✅ Database Connected Successfully via alternate host [${altHost} | DB: ${dbName}]`);
+        return;
+      } catch (altErr) {
+        logger.error(`❌ Connection via alternate host [${altHost}] also failed: ${altErr.message}`);
+      }
+    }
+
     if (process.env.NODE_ENV !== 'production' && !useSqlite) {
       logger.warn(`Connecting via embedded fallback database file (${sqliteStoragePath})...`);
       try {
