@@ -15,9 +15,9 @@ dotenv.config();
 const rawHost = (process.env.DB_HOST || '').trim();
 const dbHost = (rawHost === 'localhost' || rawHost === '::1' || !rawHost) ? '127.0.0.1' : rawHost;
 const dbPort = parseInt(process.env.DB_PORT, 10) || 3306;
-const dbName = process.env.DB_NAME || 'u500235979_andaman_trials';
+const dbName = process.env.DB_NAME || 'u500235979_andaman';
 const dbUser = process.env.DB_USER || 'u500235979_vgtechstudio';
-const dbPassword = (process.env.DB_PASSWORD || 'SjAEKgS4;aN').replace(/^["']|["']$/g, '');
+const dbPassword = (process.env.DB_PASSWORD || '1H^l7H1#').replace(/^["']|["']$/g, '');
 
 export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
@@ -33,8 +33,8 @@ export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
 
 export const connectDatabase = async () => {
   const hosts = [dbHost, '127.0.0.1', 'localhost'].filter((v, i, a) => v && a.indexOf(v) === i);
-  const dbNames = [dbName, 'u500235979_andaman_trials', 'u500235979_andaman_trails', 'u500235979_andamantrials'].filter((v, i, a) => v && a.indexOf(v) === i);
-  const passwords = [dbPassword, 'SjAEKgS4;aN', 'SjAEKgS4'].filter((v, i, a) => v && a.indexOf(v) === i);
+  const dbNames = [dbName, 'u500235979_andaman', 'u500235979_andaman_trials', 'u500235979_andaman_trails', 'u500235979_andamantrials'].filter((v, i, a) => v && a.indexOf(v) === i);
+  const passwords = [dbPassword, '1H^l7H1#', 'SjAEKgS4;aN', 'SjAEKgS4'].filter((v, i, a) => v && a.indexOf(v) === i);
   const sockets = [null, '/var/run/mysqld/mysqld.sock', '/tmp/mysql.sock', '/var/lib/mysql/mysql.sock'];
 
   for (const h of hosts) {
