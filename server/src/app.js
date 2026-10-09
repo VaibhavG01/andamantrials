@@ -119,31 +119,61 @@ const distDir = getDistFolder();
 
 if (distDir) {
   // 1. Mount assets static middleware first for maximum speed & exact MIME types
-  app.use('/assets', express.static(path.join(distDir, 'assets')));
+  app.use('/assets', express.static(path.join(distDir, 'assets'), {
+    maxAge: '1y',
+    immutable: true
+  }));
 
   // 2. Mount root static middleware (favicon, logo, icons, manifest)
-  app.use(express.static(distDir, { index: false }));
+  app.use(express.static(distDir, {
+    index: false,
+    setHeaders: (res, filepath) => {
+      if (filepath.endsWith('index.html')) {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+    }
+  }));
 
-  // 3. Fallback alias for outdated asset hash requests (e.g. index-D3645nFV.css -> index-*.css)
+  // 3. Smart fallback alias for outdated/cached asset hash requests (e.g. index-CRxKNyHl.js -> index-*.js)
   app.use('/assets', (req, res) => {
     const assetsFolder = path.join(distDir, 'assets');
     if (fs.existsSync(assetsFolder)) {
       const files = fs.readdirSync(assetsFolder);
-      if (req.path.endsWith('.css')) {
-        const cssFile = files.find(f => f.endsWith('.css'));
-        if (cssFile) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-          return res.sendFile(path.join(assetsFolder, cssFile));
+      const reqFilename = path.basename(req.path || '');
+      const ext = path.extname(reqFilename).toLowerCase();
+
+      if (ext === '.css' || ext === '.js') {
+        const nameWithoutExt = reqFilename.slice(0, -ext.length);
+        const parts = nameWithoutExt.split('-');
+        const prefix = parts.length > 1 ? parts.slice(0, -1).join('-') : nameWithoutExt;
+
+        let match = files.find(f => f.startsWith(prefix + '-') && f.endsWith(ext));
+        if (!match && ext === '.css') {
+          match = files.find(f => f.endsWith('.css'));
         }
-      }
-      if (req.path.endsWith('.js')) {
-        const jsFile = files.find(f => f.startsWith('index-') && f.endsWith('.js')) || files.find(f => f.endsWith('.js'));
-        if (jsFile) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-          return res.sendFile(path.join(assetsFolder, jsFile));
+        if (!match && ext === '.js') {
+          match = files.find(f => f.startsWith('index-') && f.endsWith('.js')) || files.find(f => f.endsWith('.js'));
+        }
+
+        if (match) {
+          const mimeType = ext === '.css' ? 'text/css; charset=utf-8' : 'application/javascript; charset=utf-8';
+          res.setHeader('Content-Type', mimeType);
+          res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+          return res.sendFile(path.join(assetsFolder, match));
         }
       }
     }
+
+    const ext = path.extname(req.path || '').toLowerCase();
+    if (ext === '.css') {
+      return res.status(404).setHeader('Content-Type', 'text/css; charset=utf-8').send('/* Asset Not Found */');
+    }
+    if (ext === '.js') {
+      return res.status(404).setHeader('Content-Type', 'application/javascript; charset=utf-8').send('/* Asset Not Found */');
+    }
+
     res.status(404).type('text/plain').send('Asset Not Found');
   });
 
@@ -154,6 +184,9 @@ if (distDir) {
     }
     const indexPath = path.join(distDir, 'index.html');
     if (fs.existsSync(indexPath)) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       return res.sendFile(indexPath);
     }
     next();

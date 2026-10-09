@@ -3,6 +3,13 @@ import fs from 'fs';
 
 export const notFoundHandler = (req, res, next) => {
   if (req.originalUrl && req.originalUrl.startsWith('/assets/')) {
+    const ext = req.originalUrl.split('?')[0].split('.').pop()?.toLowerCase();
+    if (ext === 'css') {
+      return res.status(404).setHeader('Content-Type', 'text/css; charset=utf-8').send('/* Asset Not Found */');
+    }
+    if (ext === 'js') {
+      return res.status(404).setHeader('Content-Type', 'application/javascript; charset=utf-8').send('/* Asset Not Found */');
+    }
     return res.status(404).type('text/plain').send('Asset Not Found');
   }
   const error = new Error(`Resource Not Found - ${req.originalUrl}`);
@@ -13,6 +20,13 @@ export const notFoundHandler = (req, res, next) => {
 
 export const errorHandler = (err, req, res, next) => {
   if (req.originalUrl && req.originalUrl.startsWith('/assets/')) {
+    const ext = req.originalUrl.split('?')[0].split('.').pop()?.toLowerCase();
+    if (ext === 'css') {
+      return res.status(404).setHeader('Content-Type', 'text/css; charset=utf-8').send('/* Asset Error */');
+    }
+    if (ext === 'js') {
+      return res.status(404).setHeader('Content-Type', 'application/javascript; charset=utf-8').send('/* Asset Error */');
+    }
     return res.status(404).type('text/plain').send('Asset Not Found');
   }
 
