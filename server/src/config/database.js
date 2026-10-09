@@ -8,6 +8,11 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+dotenv.config();
+
 const sqliteStoragePath = path.resolve(__dirname, '../../andaman_trails.sqlite');
 
 const dbHost = process.env.DB_HOST || '127.0.0.1';
@@ -31,28 +36,34 @@ export const sequelize = useSqlite
       dialect: 'mysql',
       logging: false,
       pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+      dialectOptions: {
+        connectTimeout: 10000,
+      },
       define: { timestamps: true, underscored: false },
     });
 
 export const connectDatabase = async () => {
   try {
     await sequelize.authenticate();
-    logger.info(`✅ Database Connected Successfully [Dialect: ${sequelize.getDialect().toUpperCase()}]`);
+    logger.info(`✅ Database Connected Successfully [Dialect: ${sequelize.getDialect().toUpperCase()} | Host: ${dbHost} | DB: ${dbName}]`);
   } catch (error) {
-    logger.warn(`MySQL Server unavailable (${error.message}). Connecting via embedded database file (${sqliteStoragePath})...`);
-    // Connect SQLite Fallback dynamically
-    try {
-      const sqliteSeq = new Sequelize({
-        dialect: 'sqlite',
-        storage: sqliteStoragePath,
-        logging: false,
-        define: { timestamps: true, underscored: false },
-      });
-      await sqliteSeq.authenticate();
-      Object.assign(sequelize, sqliteSeq);
-      logger.info(`✅ Local Database Connected Successfully [Dialect: SQLITE]`);
-    } catch (sqliteErr) {
-      logger.error(`Database Connection Failed: ${sqliteErr.message}`);
+    logger.error(`❌ MySQL Connection Error [Host: ${dbHost} | User: ${dbUser} | DB: ${dbName}]: ${error.message}`);
+    
+    if (process.env.NODE_ENV !== 'production' && !useSqlite) {
+      logger.warn(`Connecting via embedded fallback database file (${sqliteStoragePath})...`);
+      try {
+        const sqliteSeq = new Sequelize({
+          dialect: 'sqlite',
+          storage: sqliteStoragePath,
+          logging: false,
+          define: { timestamps: true, underscored: false },
+        });
+        await sqliteSeq.authenticate();
+        Object.assign(sequelize, sqliteSeq);
+        logger.info(`✅ Local Database Connected Successfully [Dialect: SQLITE]`);
+      } catch (sqliteErr) {
+        logger.error(`Database Connection Failed: ${sqliteErr.message}`);
+      }
     }
   }
 };
