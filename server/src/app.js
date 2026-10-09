@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import path from 'path';
+import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 
@@ -82,6 +83,25 @@ app.get('/api/v1/health', async (req, res) => {
 
 // ── 7. Primary REST API v1 Routes
 app.use(process.env.API_PREFIX || '/api/v1', apiRoutes);
+
+// ── 7.5. Serve Static Frontend Built Assets (Production Fallback)
+const clientDistPath = path.join(process.cwd(), 'client', 'dist');
+const rootDistPath = path.join(process.cwd(), 'dist');
+const distPath = fs.existsSync(clientDistPath) ? clientDistPath : (fs.existsSync(rootDistPath) ? rootDistPath : null);
+
+if (distPath) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/api-docs')) {
+      return next();
+    }
+    const indexPath = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+    next();
+  });
+}
 
 // ── 8. Error Handling Middlewares
 app.use(notFoundHandler);
